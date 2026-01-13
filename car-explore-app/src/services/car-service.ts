@@ -25,7 +25,7 @@ export class CarService {
       this.carsSubject.next(cars);
     });
   }
-  private readonly filteredCars$= combineLatest([this.cars$, this.filters$]).pipe(
+  public readonly filteredCars$= combineLatest([this.cars$, this.filters$]).pipe(
     map(([cars, filters]) => cars.filter((car => {
       if(filters.make && car.make !== filters.make) return false;
       if(filters.model && car.model !== filters.model) return false;
@@ -39,7 +39,7 @@ export class CarService {
       shareReplay(1)
       ));
 
-  private readonly selectedCar$ = combineLatest([this.cars$, this.selectedCarId$]).pipe(
+  public readonly selectedCar$ = combineLatest([this.cars$, this.selectedCarId$]).pipe(
     map(([cars, id]) => cars.find(car => car.id === id) || null),
     shareReplay(1)
     );

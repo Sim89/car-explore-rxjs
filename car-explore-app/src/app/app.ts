@@ -1,9 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import {CarExplorerPageComponent} from '../pages/car-explorer-page/car-explorer-page.component';
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [
+    CarExplorerPageComponent
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
