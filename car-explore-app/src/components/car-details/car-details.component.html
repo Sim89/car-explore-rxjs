@@ -1,1 +1,22 @@
-<p>car-details.component works!</p>
+<div>
+  <div class="card mb-4">
+    @if (car()) {
+    <div class="card-header-details">
+      <img [src]="car()?.imageUrl" alt="car-image">
+      <h2>{{ car()?.make }} {{ car()?.model }} Details</h2>
+    </div>
+    <div class="card-body">
+      <p><strong>Year:</strong> {{ car()?.year }}</p>
+      <p><strong>Color:</strong> {{ car()?.color }}</p>
+      <p><strong>Price:</strong> £{{ car()?.price | number }}</p>
+      <p><strong>Description:</strong> {{ car()?.description }}</p>
+
+      <button (click)="onToggle()">Add to Favourites</button>
+      <button (click)="onDelete()">Delete Car</button>
+    </div>
+    }
+  </div>
+  <ng-template>
+    <p>Select a car to see details. </p>
+  </ng-template>
+</div>

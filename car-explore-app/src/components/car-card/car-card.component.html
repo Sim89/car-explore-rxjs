@@ -1,1 +1,19 @@
-<p>car-card.component works!</p>
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img [src]="car()?.imageUrl"
+        class="img-fluid rounded-start"
+        alt="{{ car()?.make}} {{ car()?.model }}"
+      />
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{ car()?.make }} {{ car()?.model }}</h5>
+        <p class="card-text">
+          <strong>Colour:</strong> {{ car()?.color }}<br />
+          <strong>Price:</strong> £{{ car()?.price }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

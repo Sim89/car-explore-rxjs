@@ -1,1 +1,16 @@
-<app-car-filter></app-car-filter>
+<section class="car-explorer-page">
+    <h1>Car Explorer</h1>
+  <app-car-filter
+    (searchQuery)="onSearch($event)"
+  ></app-car-filter>
+    <div class="content">
+    <app-car-list [cars]="cars$ | async"
+                  (selectedCar)="selectCar($event)"
+    ></app-car-list>
+    <app-car-details [car]="selectedCar$ | async"
+                   (toggleFavourite)="onToggleFavourite($event)"
+                     (deleteCar)="onDeleteCar($event)"
+  ></app-car-details>
+  </div>
+</section>
+

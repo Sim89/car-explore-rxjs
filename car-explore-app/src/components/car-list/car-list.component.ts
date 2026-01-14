@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
+import {Component, input, output} from '@angular/core';
+import {CarData} from '../../types/car.data';
+import {CarCardComponent} from '../car-card/car-card.component';
 
 @Component({
   selector: 'app-car-list',
-  imports: [],
+  imports: [
+    CarCardComponent
+  ],
   templateUrl: './car-list.component.html',
   styleUrl: './car-list.component.scss',
 })
 export class CarListComponent {
+public cars = input<CarData [] | null>([]);
+public selectedCar = output<number>();
 
+public onClickSelectedCar(carId: number) {
+  this.selectedCar.emit(carId);
+}
 }

@@ -20,6 +20,11 @@ export class CarService {
 
   private readonly searchQuerySubject = new Subject<string>();
 
+  constructor() {
+    this.loadInitialCars();
+    this.carSearch();
+  }
+
   private loadInitialCars(): void {
     this.carApiService.loadCars().subscribe(cars => {
       this.carsSubject.next(cars);
@@ -45,7 +50,7 @@ export class CarService {
     );
 
 
- public setSearchQuery(query:string): void {
+ public setSearchQuery(query:string ): void {
     this.searchQuerySubject.next(query);
   }
 

@@ -1,1 +1,9 @@
-<p>car-list.component works!</p>
+<div class="d-flex justify-content-center my-3 car-list">
+  @for ( car of cars(); track car.id) {
+  <div class="car-row" style="max-width: 600px; width: 100%;"
+  (click)="onClickSelectedCar(car.id)">
+<app-car-card [car]="car"></app-car-card>
+  </div>
+  }
+
+</div>
