@@ -1,19 +1,26 @@
-<div class="card mb-3">
-  <div class="row g-0">
-    <div class="col-md-4">
+<div class="car-card ">
+    <div class=" car-card-image">
       <img [src]="car()?.imageUrl"
-        class="img-fluid rounded-start"
         alt="{{ car()?.make}} {{ car()?.model }}"
+           loading="lazy"
       />
     </div>
+
     <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">{{ car()?.make }} {{ car()?.model }}</h5>
-        <p class="card-text">
-          <strong>Colour:</strong> {{ car()?.color }}<br />
+      <div class="card-content">
+        <h6 class="mb-1">{{ car()?.make }} {{ car()?.model }}</h6>
+        <p class="text-muted small mb-0">
+          Colour: {{ car()?.color }}
+        </p>
+        <p>
           <strong>Price:</strong> £{{ car()?.price }}
         </p>
       </div>
     </div>
+
+  <button class="favourite-btn" (click)="onFavouriteClick($event)">
+    <i class="bi"
+    [ngClass]="isFavourite() ? 'bi-heart-fill' : 'bi-heart'"
+    ></i>
+  </button>
   </div>
-</div>

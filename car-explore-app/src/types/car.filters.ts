@@ -3,11 +3,10 @@ export interface CarFilters {
   model?: string;
   year?: string;
   mileage?: number;
-  color?: string;
+  colour?: string;
   searchTerm?: string;
   minPrice?: number;
   maxPrice?: number;
-  electric?: boolean;
-  automatic?: boolean;
-  manual?: boolean;
+  fuelType?: 'petrol' | 'diesel';
+  carType?: 'electric' | 'manual' | 'hybrid'
 }

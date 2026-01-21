@@ -1,0 +1,96 @@
+
+<div class="container mb-3">
+  <form [formGroup]="carInputForm" class="car-filter-form card p-3">
+      <div class="filter-width mb-3">
+        <input
+          id="searchTerm"
+          #searchInput
+          type="text"
+          placeholder="Search make, model or year"
+          formControlName="searchTerm"
+          class="search-input mb-2">
+
+      <button (click)="toggleFilters()" type="button" class="filter-toggle-btn mb-3">
+      {{ showFilters() ? 'Hide Filters' : 'Show Filters' }}
+      </button>
+</div>
+
+    @if (showFilters()) {
+    <div class="filter-bar shadow-sm rounded-4 mb-3">
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+      <input
+      type="text"
+      placeholder="Make"
+      formControlName="make">
+      </div>
+      <div class="col-md-6">
+      <input
+        type="text"
+        placeholder="Model"
+        formControlName="model">
+    </div>
+      <div class="col-md-6">
+        <input
+          type="number"
+          placeholder="Min Price"
+          formControlName="minPrice">
+      </div>
+      <div class="col-md-6">
+        <input
+          type="number"
+          placeholder="Max Price"
+          formControlName="maxPrice">
+      </div>
+    </div>
+
+      <div class="row g-3 align-items-center mt-3">
+        <div class="col-md-4">
+    <div class="form-check mb-3">
+      <label class="form-check-label custom-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          formControlName="carType">
+        <span>Electric</span>
+      </label>
+    </div>
+        </div>
+
+        <div class="col-md-4">
+        <div class="form-check mb-3">
+        <label class="form-check-label custom-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          formControlName="carType">
+          <span>Hybrid</span>
+        </label>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-check mb-3">
+          <label class="form-check-label custom-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          formControlName="carType">
+            <span>Manual</span>
+          </label>
+    </div>
+      </div>
+</div>
+
+    <div class="fuel-type-wrap">
+      <select class="form-select" formControlName="fuelType" >
+        <option value="">Select Fuel Type</option>
+        <option value="petrol">Petrol</option>
+        <option value="diesel">Diesel</option>
+        <option value="electric">Electric</option>
+      </select>
+    </div>
+    </div>
+}
+  </form>
+</div>

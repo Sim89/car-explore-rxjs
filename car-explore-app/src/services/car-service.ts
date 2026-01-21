@@ -1,8 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import {BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, map, shareReplay, Subject} from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  refCount,
+  shareReplay,
+  Subject
+} from 'rxjs';
 import {CarData} from '../types/car.data';
 import {CarFilters} from '../types/car.filters';
 import {CarApiService} from './car-api.service';
+import {FavouritesService} from './favourites.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,18 +40,22 @@ export class CarService {
       this.carsSubject.next(cars);
     });
   }
+
   public readonly filteredCars$= combineLatest([this.cars$, this.filters$]).pipe(
     map(([cars, filters]) => cars.filter((car => {
       if(filters.make && car.make !== filters.make) return false;
       if(filters.model && car.model !== filters.model) return false;
-      if(filters.searchTerm && !`${car.make} ${car.model}`.toLowerCase().includes(filters.searchTerm.toLowerCase())) {
-        return false;
+      if(filters.minPrice && car.price > filters.minPrice) return false;
+      if(filters.maxPrice && car.price < filters.maxPrice) return false;
+      const searchTerm = filters.searchTerm?.toLowerCase();
+      if (searchTerm) {
+        const search = `${car.make} ${car.model} ${car.year}`.toLowerCase();
+        if (!search.includes(searchTerm)) return false;
       }
-    if(filters.minPrice && car.price > filters.minPrice) return false;
-    return !(filters.maxPrice && car.price < filters.maxPrice);
+      return true;
     })
     ),
-      shareReplay(1)
+      shareReplay({ bufferSize: 1, refCount: true })
       ));
 
   public readonly selectedCar$ = combineLatest([this.cars$, this.selectedCarId$]).pipe(
@@ -49,9 +63,8 @@ export class CarService {
     shareReplay(1)
     );
 
-
  public setSearchQuery(query:string ): void {
-    this.searchQuerySubject.next(query);
+    this.searchQuerySubject.next(query.toLowerCase());
   }
 
   private carSearch(): void {

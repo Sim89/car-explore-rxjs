@@ -11,10 +11,14 @@ import {CarCardComponent} from '../car-card/car-card.component';
   styleUrl: './car-list.component.scss',
 })
 export class CarListComponent {
-public cars = input<CarData [] | null>([]);
-public selectedCar = output<number>();
+  public cars = input<CarData [] | null>([]);
+  public selectedCar = output<number>();
+  public selectedCarId = input<number | null>(null);
+  public favouriteIds = input<number [] | null>(null);
+  public toggleFavourite = output<number>();
 
-public onClickSelectedCar(carId: number) {
-  this.selectedCar.emit(carId);
-}
+  public onClickSelectedCar(carId: number) {
+    this.selectedCar.emit(carId);
+  }
+
 }

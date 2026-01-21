@@ -1,8 +1,13 @@
-<div class="d-flex justify-content-center my-3 car-list">
+<div class="car-list">
   @for ( car of cars(); track car.id) {
-  <div class="car-row" style="max-width: 600px; width: 100%;"
+  <div class="car-list-item" style="max-width: 600px; width: 100%;"
+       [class.active]="car.id === selectedCarId()"
+       [class.favourite]="favouriteIds()?.includes(car.id)"
   (click)="onClickSelectedCar(car.id)">
-<app-car-card [car]="car"></app-car-card>
+<app-car-card [car]="car"
+              [isFavourite]="favouriteIds()?.includes(car.id)"
+              (toggleCarFavourite)="toggleFavourite.emit($event)"
+></app-car-card>
   </div>
   }
 

@@ -10,6 +10,9 @@ export class FavouritesService {
   private readonly favouriteSubject = new BehaviorSubject<number[]>([]);
   readonly favourites$ = this.favouriteSubject.asObservable();
 
+  constructor() {
+    this.loadFromStorage();
+  }
   private loadFromStorage(): void {
     const storedFavourites = localStorage.getItem(this.localStorageKey);
     this.favouriteSubject.next(storedFavourites ? JSON.parse(storedFavourites) : []);

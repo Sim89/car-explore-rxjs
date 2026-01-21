@@ -1,7 +1,8 @@
-import {Component, input, output} from '@angular/core';
+import {Component, inject, input, output} from '@angular/core';
 import {CarData} from '../../types/car.data';
 import {DecimalPipe} from '@angular/common';
 import {CarFilters} from '../../types/car.filters';
+import {FavouritesService} from '../../services/favourites.service';
 
 @Component({
   selector: 'app-car-details',
@@ -17,7 +18,7 @@ public toggleFavourite = output<number>();
 public deleteCar = output<number>();
 public updateCar = output<CarFilters>();
 
-public onToggle(): void {
+public onToggleFavourites(): void {
   const car = this.car();
   if(!car) return;
   this.toggleFavourite.emit(car.id);

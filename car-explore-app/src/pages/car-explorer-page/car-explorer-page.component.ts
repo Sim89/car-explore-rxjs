@@ -1,18 +1,19 @@
 import {Component, inject} from '@angular/core';
 import {CarService} from '../../services/car-service';
 import {FavouritesService} from '../../services/favourites.service';
-import {CarFilterComponent} from '../../components/car-filter/car-filter.component';
+import {CarFilterFormComponent} from '../../components/car-filter/car-filter-form.component';
 import {CarDetailsComponent} from '../../components/car-details/car-details.component';
 import {AsyncPipe} from '@angular/common';
 import {CarListComponent} from '../../components/car-list/car-list.component';
-import {Observable} from 'rxjs';
+import {combineLatest, map, Observable} from 'rxjs';
 import {CarData} from '../../types/car.data';
 import {CarFilters} from '../../types/car.filters';
+import {CarApiService} from '../../services/car-api.service';
 
 @Component({
   selector: 'app-car-explorer-page',
   imports: [
-    CarFilterComponent,
+    CarFilterFormComponent,
     CarDetailsComponent,
     AsyncPipe,
     CarListComponent
@@ -22,13 +23,19 @@ import {CarFilters} from '../../types/car.filters';
 })
 export class CarExplorerPageComponent {
 private readonly _carService = inject(CarService);
-private readonly _favouriteService = inject(FavouritesService);
+private readonly _carApiService = inject(CarApiService);
+protected readonly _favouriteService = inject(FavouritesService);
 
-protected readonly cars$ = this._carService.filteredCars$;
-private readonly favouriteCount$ = this._favouriteService.favouriteCount$;
+protected cars$ = this._carService.filteredCars$;
+protected readonly favouriteCount$ = this._favouriteService.favouriteCount$;
 protected readonly selectedCar$ = this._carService.selectedCar$;
+protected readonly selectedCarId$ = this._carService.selectedCarId$;
 
-public onSearch(query:string ): void {
+protected readonly favouriteCars$ = combineLatest([this._carService.filteredCars$, this._favouriteService.favourites$]).pipe(
+    map(([cars, favouriteIds]) =>
+      cars.filter(car => favouriteIds.includes(car.id))));
+
+  public onSearch(query:string ): void {
  this._carService.setSearchQuery(query);
 }
 public selectCar(carId: number): void {

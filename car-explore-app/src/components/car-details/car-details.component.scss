@@ -1,0 +1,25 @@
+.card-details-image{
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.card-details-image img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.car-details {
+  padding: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.details-content {
+  padding: 4px 6px;
+}
