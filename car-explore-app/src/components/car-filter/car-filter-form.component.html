@@ -8,6 +8,7 @@
           type="text"
           placeholder="Search make, model or year"
           formControlName="searchTerm"
+          (input)="onInputSearch($any($event.target).value)"
           class="search-input mb-2">
 
       <button (click)="toggleFilters()" type="button" class="filter-toggle-btn mb-3">

@@ -6,9 +6,7 @@ import {CarDetailsComponent} from '../../components/car-details/car-details.comp
 import {AsyncPipe} from '@angular/common';
 import {CarListComponent} from '../../components/car-list/car-list.component';
 import {combineLatest, map, Observable} from 'rxjs';
-import {CarData} from '../../types/car.data';
 import {CarFilters} from '../../types/car.filters';
-import {CarApiService} from '../../services/car-api.service';
 
 @Component({
   selector: 'app-car-explorer-page',
@@ -23,7 +21,6 @@ import {CarApiService} from '../../services/car-api.service';
 })
 export class CarExplorerPageComponent {
 private readonly _carService = inject(CarService);
-private readonly _carApiService = inject(CarApiService);
 protected readonly _favouriteService = inject(FavouritesService);
 
 protected cars$ = this._carService.filteredCars$;
@@ -35,24 +32,17 @@ protected readonly favouriteCars$ = combineLatest([this._carService.filteredCars
     map(([cars, favouriteIds]) =>
       cars.filter(car => favouriteIds.includes(car.id))));
 
-  public onSearch(query:string ): void {
- this._carService.setSearchQuery(query);
+  public onSearch(value:string ): void {
+ this._carService.setSearchQuery(value);
 }
+
 public selectCar(carId: number): void {
   this._carService.selectCar(carId);
 }
 public onToggleFavourite(id: number): void {
   this._favouriteService.toggleFavourite(id);
 }
-public onAddCar(car: CarData): void {
-  this._carService.addCar(car);
-}
-public onUpdateCar(car: CarData): void {
-  this._carService.updateSelectedCar(car);
-}
-public onDeleteCar(carId: number): void {
-  this._carService.deleteCar(carId);
-}
+
 public onUpdateFilteredCars(filter: CarFilters) : void {
   this._carService.updateFilters(filter);
 }
