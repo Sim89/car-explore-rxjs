@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  BehaviorSubject,
+  BehaviorSubject, catchError,
   combineLatest,
   debounceTime,
-  distinctUntilChanged,
-  map,
+  distinctUntilChanged, filter,
+  map, of,
   refCount,
-  shareReplay,
-  Subject
+  shareReplay, startWith,
+  Subject, switchMap
 } from 'rxjs';
 import {CarData} from '../types/car.data';
 import {CarFilters} from '../types/car.filters';
@@ -19,8 +19,8 @@ import {FavouritesService} from './favourites.service';
 })
 export class CarService {
   private carApiService = inject(CarApiService);
-  private readonly carsSubject = new BehaviorSubject<CarData[]>([]);
-  cars$ = this.carsSubject.asObservable();
+
+  private readonly searchQuerySubject = new Subject<string>();
 
   private readonly filterSubject = new BehaviorSubject<CarFilters>({});
   filters$ = this.filterSubject.asObservable();
@@ -28,20 +28,21 @@ export class CarService {
   private readonly selectedCarIdSubject = new BehaviorSubject<number | null>(null);
   selectedCarId$ = this.selectedCarIdSubject.asObservable();
 
-  private readonly searchQuerySubject = new Subject<string>();
 
-  constructor() {
-    this.loadInitialCars();
-    this.carSearch();
-  }
+  private readonly apiCars$ = this.searchQuerySubject.pipe(
+    filter(query => query.length > 0),
+    debounceTime(300),
+    distinctUntilChanged(),
+    switchMap(query=> this.carApiService.searchCars(query).pipe(
+      catchError((err) => {
+        console.error('API search Failed', err);
+        return of([] as CarData[]);
+      })
+    )),
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
 
-  private loadInitialCars(): void {
-    this.carApiService.loadCars().subscribe(cars => {
-      this.carsSubject.next(cars);
-    });
-  }
-
-  public readonly filteredCars$= combineLatest([this.cars$, this.filters$]).pipe(
+  public readonly filteredCars$= combineLatest([this.apiCars$, this.filters$]).pipe(
     map(([cars, filters]) => cars.filter((car => {
       if(filters.make && car.make !== filters.make) return false;
       if(filters.model && car.model !== filters.model) return false;
@@ -58,22 +59,16 @@ export class CarService {
       shareReplay({ bufferSize: 1, refCount: true })
       ));
 
-  public readonly selectedCar$ = combineLatest([this.cars$, this.selectedCarId$]).pipe(
+  public readonly selectedCar$ = combineLatest([ this.filteredCars$, this.selectedCarId$]).pipe(
     map(([cars, id]) => cars.find(car => car.id === id) || null),
-    shareReplay(1)
+    shareReplay({ bufferSize: 1, refCount: true })
     );
+
 
  public setSearchQuery(query:string ): void {
     this.searchQuerySubject.next(query.toLowerCase());
-  }
-
-  private carSearch(): void {
-    this.searchQuerySubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()).subscribe(term => {
-        const currentFilter = this.filterSubject.value;
-        this.filterSubject.next({...currentFilter, searchTerm: term || undefined});
-    })
+    const current = this.filterSubject.value;
+    this.filterSubject.next({ ...current, searchTerm: query.toLowerCase() || undefined})
   }
 
   public updateFilters(filters: CarFilters): void {
@@ -82,23 +77,5 @@ export class CarService {
 
   public selectCar(id: number): void {
    this.selectedCarIdSubject.next(id);
-  }
-
-  public updateSelectedCar(updated: CarData): void {
-   const updateCar = this.carsSubject.value.map(car => car.id === updated.id ? updated : car);
-   this.carsSubject.next(updateCar);
-   this.carApiService.saveCars(updateCar);
-  }
-
-  public addCar(newCar: CarData): void {
-   const addNewCar = [...this.carsSubject.value, newCar];
-   this.carsSubject.next(addNewCar);
-   this.carApiService.saveCars(addNewCar);
-  }
-
-  public deleteCar(id: number): void {
-   const deleteCar = this.carsSubject.value.filter(car => car.id !== id);
-   this.carsSubject.next(deleteCar);
-   this.carApiService.saveCars(deleteCar);
   }
 }

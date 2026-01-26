@@ -30,8 +30,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
+              "src/styles.scss"
             ]
           },
           "configurations": {
@@ -60,6 +59,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "car-explore-app:build:production"

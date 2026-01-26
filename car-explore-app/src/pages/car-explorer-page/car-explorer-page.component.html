@@ -16,14 +16,12 @@
                   [selectedCarId]="selectedCarId$ | async"
                   (selectedCar)="selectCar($event)"
                   [favouriteIds]="_favouriteService.favourites$ | async"
-                  (toggleFavourite)="onToggleFavourite($event)"
     ></app-car-list>
       </div>
   @if (selectedCar$ | async; as selectCar) {
       <div class="col-lg-5">
         <app-car-details [car]="selectCar "
                    (toggleFavourite)="onToggleFavourite($event)"
-                     (deleteCar)="onDeleteCar($event)"
   ></app-car-details>
     </div>
   }
@@ -32,4 +30,5 @@
   </div>
 </div>
 </section>
+
 
