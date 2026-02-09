@@ -3,16 +3,14 @@ import {
   BehaviorSubject, catchError,
   combineLatest,
   debounceTime,
-  distinctUntilChanged, filter,
-  map, of,
-  refCount,
-  shareReplay, startWith,
+  distinctUntilChanged,
+  map, Observable, of,
+  shareReplay,
   Subject, switchMap
 } from 'rxjs';
 import {CarData} from '../types/car.data';
 import {CarFilters} from '../types/car.filters';
 import {CarApiService} from './car-api.service';
-import {FavouritesService} from './favourites.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,22 +26,39 @@ export class CarService {
   private readonly selectedCarIdSubject = new BehaviorSubject<number | null>(null);
   selectedCarId$ = this.selectedCarIdSubject.asObservable();
 
+  private readonly allCarsSubject = new BehaviorSubject<CarData[]>([]);
+  public readonly allCars$ = this.allCarsSubject.asObservable();
 
-  private readonly apiCars$ = this.searchQuerySubject.pipe(
-    filter(query => query.length > 0),
+  private readonly apiCars$: Observable<CarData[]> = this.searchQuerySubject.pipe(
     debounceTime(300),
     distinctUntilChanged(),
-    switchMap(query=> this.carApiService.searchCars(query).pipe(
-      catchError((err) => {
-        console.error('API search Failed', err);
-        return of([] as CarData[]);
-      })
-    )),
+    switchMap((query: string)=> {
+      const q = query?.trim().toLowerCase() ?? '';
+      if (!q) {
+        return of<CarData[]>([]);
+      }
+      return this.carApiService.searchCars(query).pipe(
+        catchError(() => of<CarData[]> ([]))
+      );
+        }),
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
-  public readonly filteredCars$= combineLatest([this.apiCars$, this.filters$]).pipe(
-    map(([cars, filters]) => cars.filter((car => {
+  constructor() {
+    this.apiCars$.subscribe(newCars => {
+      // const current = this.allCarsSubject.value;
+      //
+      // const mergedCars = [
+      //   ...current,
+      //   ...newCars.filter(car => !current.some(car => car.id === car.id)),
+      // ];
+      this.allCarsSubject.next(newCars);
+    })
+  };
+
+  public readonly filteredCars$: Observable<CarData[]> = combineLatest([this.allCars$, this.filters$]).pipe(
+    map(([cars, filters]): CarData[]  => {
+    return cars.filter((car: CarData) => {
       if(filters.make && car.make !== filters.make) return false;
       if(filters.model && car.model !== filters.model) return false;
       if(filters.minPrice && car.price > filters.minPrice) return false;
@@ -54,13 +69,13 @@ export class CarService {
         if (!search.includes(searchTerm)) return false;
       }
       return true;
-    })
-    ),
+    });
+    }),
       shareReplay({ bufferSize: 1, refCount: true })
-      ));
+      );
 
-  public readonly selectedCar$ = combineLatest([ this.filteredCars$, this.selectedCarId$]).pipe(
-    map(([cars, id]) => cars.find(car => car.id === id) || null),
+  public readonly selectedCar$: Observable<CarData | null> = combineLatest([ this.filteredCars$, this.selectedCarId$]).pipe(
+    map(([cars, id]) => cars.find(c => c.id === id) || null),
     shareReplay({ bufferSize: 1, refCount: true })
     );
 
@@ -68,7 +83,8 @@ export class CarService {
  public setSearchQuery(query:string ): void {
     this.searchQuerySubject.next(query.toLowerCase());
     const current = this.filterSubject.value;
-    this.filterSubject.next({ ...current, searchTerm: query.toLowerCase() || undefined})
+    this.filterSubject.next({ ...current, searchTerm:  undefined});
+    this.selectedCarIdSubject.next(null);
   }
 
   public updateFilters(filters: CarFilters): void {

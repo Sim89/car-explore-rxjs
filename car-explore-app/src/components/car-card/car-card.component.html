@@ -18,7 +18,7 @@
       </div>
     </div>
 
-  <button class="favourite-btn" (click)="onFavouriteClick()">
+  <button class="favourite-btn" (click)="onToggleFavourite($event)">
     <i class="bi"
     [ngClass]="isFavourite() ? 'bi-heart-fill text-danger' : 'bi-heart'"
     ></i>

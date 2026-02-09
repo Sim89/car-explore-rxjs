@@ -6,6 +6,7 @@
   (click)="onClickSelectedCar(car.id)">
 <app-car-card [car]="car"
               [isFavourite]="favouriteIds()?.includes(car.id)"
+              (toggleFavourite)="onClickFavourite($event)"
 ></app-car-card>
   </div>
   }

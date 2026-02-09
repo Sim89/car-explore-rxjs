@@ -1,0 +1,21 @@
+<div class="favourites-sidebar">
+  <h4>My Cars</h4>
+  @if (favouriteCars$ | async; as cars){
+  <ng-container>
+    @if(cars.length === 0) {
+    <p class="empty">No Favourite Cars Yet</p>
+    }
+    @for(car of cars; track car.id) {
+    <div class="favourite-item">
+      <div>
+        <strong>{{car.make}} {{car.model}}</strong>
+      </div>
+
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFavourites.emit(car.id)">
+        x
+      </button>
+    </div>
+    }
+  </ng-container>
+  }
+</div>

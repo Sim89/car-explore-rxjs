@@ -1,7 +1,6 @@
-import {Component, inject, input, output} from '@angular/core';
-import {CarData} from '../../types/car.data';
+import {Component, input, output} from '@angular/core';
 import {NgClass} from '@angular/common';
-import {FavouritesService} from '../../services/favourites.service';
+import {CarData} from '../../types/car.data';
 
 @Component({
   selector: 'app-car-card',
@@ -14,15 +13,11 @@ import {FavouritesService} from '../../services/favourites.service';
 export class CarCardComponent {
 public car = input<CarData>();
 public isFavourite = input<boolean>();
-private favouriteService = inject(FavouritesService);
+public toggleFavourite = output<number>();
 
-//   onFavouriteClick(event: MouseEvent): void {
-//   event.stopPropagation();
-//   this.toggleCarFavourite.emit(this.car()!.id);
-// }
-
-onFavouriteClick(): void {
-    this.favouriteService.toggleFavourite(this.car()!.id);
-}
+  onToggleFavourite(event: MouseEvent): void {
+    event?.stopPropagation();
+    this.toggleFavourite.emit(this.car()!.id);
+  }
 
 }

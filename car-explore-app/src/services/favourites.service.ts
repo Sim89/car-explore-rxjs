@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject, map} from 'rxjs';
+import {CarData} from '../types/car.data';
 
 @Injectable({
   providedIn: 'root',
@@ -28,13 +29,15 @@ export class FavouritesService {
   public toggleFavourite(carId: number): void {
     const currentFavourite = this.favouriteSubject.value;
 
-    const updateFavouriteCar = currentFavourite.includes(carId) ? currentFavourite.filter(id => id !== carId) : [...currentFavourite, carId];
+    const carExists = currentFavourite.some(id => carId === id);
+
+    const updateFavouriteCar = carExists ? currentFavourite.filter(id => id !== carId) : [...currentFavourite, carId];
     this.favouriteSubject.next(updateFavouriteCar);
-    this.saveFavourites(updateFavouriteCar);
+    localStorage.setItem(this.localStorageKey, JSON.stringify(updateFavouriteCar));
   }
 
   public isFavourite(carId: number): boolean {
-    return this.favouriteSubject.value.includes(carId);
+    return this.favouriteSubject.value.some(car => carId === carId);
   }
 
   public clearFavourites(): void {

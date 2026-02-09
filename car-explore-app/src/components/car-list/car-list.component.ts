@@ -16,9 +16,13 @@ export class CarListComponent {
   public selectedCar = output<number>();
   public selectedCarId = input<number | null>(null);
   public favouriteIds = input<number [] | null>(null);
+  public toggleFavourite = output<number>();
 
   public onClickSelectedCar(carId: number) {
     this.selectedCar.emit(carId);
   }
 
+  public onClickFavourite(id: number) {
+    this.toggleFavourite.emit(id);
+  }
 }
